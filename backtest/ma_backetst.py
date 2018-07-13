@@ -12,7 +12,7 @@ if __name__ == '__main__':
     # Trade on GBPUSD
     pairs = ["GBPUSD"] # or ["GBPUSD","EURUSD"]
     # Specify straregy to use
-    strategy = 'test'
+    strategy = 'ma'
     
     if strategy =='test':
         strategy = TestStrategy

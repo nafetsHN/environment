@@ -20,6 +20,8 @@ def month_weekdays(year_int, month_int):
             if d.weekday() < 5 and d.month == month_int and d.year == year_int]
     
 if __name__ == '__main__':
+    # unnecessary try/except sintax - use it if you want to run the script from
+    # cmd line and ask for pair input
     try:
         pair = "GBPUSD"
     except IndexError:

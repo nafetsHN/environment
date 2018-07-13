@@ -57,7 +57,7 @@ class StreamingForexPrices(PriceHandler):
         pairs_oanda = ["%s_%s" % (p[:3], p[3:]) for p in self.pairs]
         pairs_list = ','.join(pairs_oanda)
         params = {"instruments": pairs_list}
-        client= API(access_token=self.access_token, environment=self.domain)
+        client = API(access_token=self.access_token, environment=self.domain)
         request = PricingStream(accountID=self.account_id, params=params)
         return client.request(request)
     
@@ -78,17 +78,18 @@ class StreamingForexPrices(PriceHandler):
         try:
             for msg in response:
                 if 'instrument' in msg or 'tick' in msg:
+                    print(msg)
                     self.logger.debug(msg)
                     getcontext().rounding = ROUND_HALF_DOWN
-                    instrument = msg['instrument'].replace("","_")
+                    instrument = msg['instrument'].replace("_","")
                     time = msg['time']
-                    bid = Decimal(str(msg['bid'][0]['price'])).quantize(
+                    bid = Decimal(str(msg['bids'][0]['price'])).quantize(
                             Decimal("0.00001"))
-                    ask = Decimal(str(msg['ask'][0]['price'])).quantize(
+                    ask = Decimal(str(msg['asks'][0]['price'])).quantize(
                             Decimal("0.00001"))
-                    
+                    print("Bid: %s, Ask: %s" % (bid, ask))
                     self.prices[instrument]['bid'] = bid
-                    self.prices[instrument]['aks'] = ask
+                    self.prices[instrument]['ask'] = ask
                     # Invert the prices (GBP_USD -> USD_GBP)
                     inv_pair, inv_bid, inv_ask = self.invert_prices(instrument, bid, ask)
                     self.prices[inv_pair]['bid'] = inv_bid
@@ -97,6 +98,8 @@ class StreamingForexPrices(PriceHandler):
                     
                     tick_event = TickEvent(instrument, time, bid, ask)
                     self.events_queue.put(tick_event)
+                else:
+                    print(msg['type'])
                                     
         except V20Error as e:
             # catch API related errors that may occur
@@ -107,3 +110,4 @@ class StreamingForexPrices(PriceHandler):
             self.logger.error(str(e))
         except Exception as e:
             self.logger.error('Unidentified connection error: '.format(str(e))) 
+            

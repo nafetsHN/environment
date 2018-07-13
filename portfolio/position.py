@@ -13,12 +13,12 @@ class Position(object):
         self.currency_pair = currency_pair
         self.units = units
         self.ticker = ticker
+        self.set_up_currencies()
         self.profit_base = self.calculate_profit_base()
         self.profit_perc = self.calculate_profit_perc()
         
         
     def set_up_currencies(self): #BUG: this function is not called and thus self.cur_price is not initialized!!!
-        print("Yes. we call f: set_up_currencies")
         # The currenci that is use as the reference is called the quite currecy
         # and the currency that is quoted in relation is called the base currency
         # For example:
@@ -62,7 +62,7 @@ class Position(object):
         elif self.position_type == 'short':
             # If i'm selling the pips are calc as Bid - Ask so the mult is negative  
             mult = Decimal("-1")
-        print("cur_price: ", self.cur_price)
+        #print("cur_price: ", self.cur_price)
         pips = (mult * (self.cur_price - self.avg_price).quantize(
                 Decimal("0.00001")))
         return pips
@@ -71,6 +71,7 @@ class Position(object):
         """
         Calculate absolute amount of trade (?) profit.
         """
+        #print("calculate_profit_base")
         getcontext().rounding = ROUND_HALF_DOWN
         
         pips = self.calculate_pips()
@@ -102,7 +103,7 @@ class Position(object):
         else:
             self.cur_price = Decimal(str(ticker_cur['ask']))
         
-        self.profit_base = self.calcualte_profit_base()
+        self.profit_base = self.calculate_profit_base()
         self.profit_perc = self.calculate_profit_perc()
     
     def add_units(self, units):
@@ -134,6 +135,7 @@ class Position(object):
         Dont udnerstand why getting remove_price and then not using it.
         Check if pnl is calcualted correctly.
         """
+        #print("remove_units")
         getcontext().rounding = ROUND_HALF_DOWN
         
         dec_units = Decimal(str(units))
@@ -168,6 +170,6 @@ class Position(object):
             qh_close = ticker_qh['bid'] # If we are short, wht is closing price bid?!
         self.update_position_price()
         # Calculate pnl
-        pnl = self.calcualte_pips() * qh_close * self.units
+        pnl = self.calculate_pips() * qh_close * self.units
         return pnl.quantize(Decimal("0.01"))
         

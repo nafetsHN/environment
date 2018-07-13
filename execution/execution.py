@@ -53,15 +53,19 @@ class OANDAExecutionHandler(ExecutionHandler):
         
     
     def execute_order(self, event):
+        print("execute order")
         instrument = "%s_%s" % (event.instrument[:3], event.instrument[3:])
         units = event.units
         
-        client = self.client()
+        
         #Market order
         mo = MarketOrderRequest(instrument=instrument, units=units)
+        print(mo)
         # Create order request
         request = orders.OrderCreate(self.account_id, data=mo.data)
+        print(request)
         # perform the request
-        rv = client.request(request)
+        rv = self.client.request(request)
+        print(rv)
         self.logger.debug(rv)
         

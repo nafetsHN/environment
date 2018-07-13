@@ -33,14 +33,17 @@ def trade(events, strategy, portfolio, execution, heartbeat):
         except queue.Empty:
             pass
         else:
-            if event is not None:
+            if event is not None and event.type == 'TICK':
+                print("TICK")
                 logger.info("Received new TICK event: %s" % event)
                 strategy.calculate_signals(event)
                 portfolio.update_portfolio(event)
             elif event.type == 'SIGNAL':
+                print("SIGNAL")
                 logger.info("Received new SIGNAL event: %s" % event)
-                portfolio.exeute_signal(event)
+                portfolio.execute_signal(event)
             elif event.type == 'ORDER':
+                print("ORDER")
                 logger.info("Received new ORDER event: %s" % event)
                 execution.execute_order(event)
         time.sleep(heartbeat)
@@ -65,17 +68,19 @@ if __name__ == '__main__':
     equity = EQUITY
     
     # Pairs to include in streaming data set
-    pairs = ["EURUSD"] # ["EURUSD", "GBPUSD"]
+    pairs = ["GBPUSD"] # ["EURUSD", "GBPUSD"]
+    # if EURUSD is used we need to have another stream GBPUSD for 
+    # home currency information. Test this after GBPUSD
     
     # Create the OADNA market price streaming class
     # making sure to provide authentication commands
-    print('before streaming prices')
+    #print('before streaming prices')
     prices = StreamingForexPrices(domain=DOMAIN, 
                                   access_token=ACCESS_TOKEN,
                                   account_id=ACCOUNT_ID, 
                                   pairs=pairs, 
                                   events_queue=events)
-    print('after streaming prices')
+    #print('after streaming prices')
     
     # Crete the strategy/signal generator, passing the instrument and the 
     # event queue

@@ -29,7 +29,7 @@ class TestStrategy(object):
         if event.type == 'TICK' and event.instrument == self.pairs[0]:
             #print("Tick No: %s" % self.ticks)
             if self.ticks % 5 == 0:
-                print("Tick No: %s" % self.ticks)
+                #print("Tick No: %s" % self.ticks)
                 if self.invested == False:
                     signal = SignalEvent(self.pairs[0], "market", "buy", event.time)
                     #print("Invested: False; Signal: %s" % signal)
@@ -108,7 +108,6 @@ class MovingAverageCrossStrategy(object):
             #        pd["short_sma"], pd["long_sma"], pd["invested"]))
             if pd["short_sma"] > pd["long_sma"] and not pd["invested"]:
                 print("Signal: buy")
-                return
                 signal = SignalEvent(pair, "market", "buy", event.time)
                 self.events.put(signal)
                 pd["invested"] = True
@@ -116,7 +115,6 @@ class MovingAverageCrossStrategy(object):
                 
             if pd["short_sma"] < pd["long_sma"] and pd["invested"]:
                 print("Signal: sell")
-                return
                 signal = SignalEvent(pair, "market", "sell", event.time)
                 self.events.put(signal)
                 pd["invested"] = False

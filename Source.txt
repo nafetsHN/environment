@@ -1,0 +1,4 @@
+Project: Update QStraded to use oandapyV20 OANDA API wrapper
+
+Articles:https://www.quantstart.com/articles#Forex%20Trading%20Diary
+Source code: https://github.com/mhallsmoore/qsforex
